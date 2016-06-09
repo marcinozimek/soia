@@ -9,12 +9,15 @@
 #include <sys/shm.h>
 
 key_t klucz = 3421673;
-const int max_rozm = 100;
+const int max_rozm = 40;
 
-int main()
+int main(int argc, char** argv)
 { 
+	
 	srand(time(NULL));
 	char* tab;
+	unsigned long long ost=atoll(argv[1]);
+	int a=atoi(argv[2]);	
 	int shmid = shmget(klucz, max_rozm, IPC_CREAT | 0600);
 	printf("SchmID:%d\n ", shmid);
 	if(shmid!=-1)
@@ -25,18 +28,22 @@ int main()
 		printf("Blad shmat\n");
 			exit(0);
 		}
-		printf("Wysylanie\n");
-		int i=0;
-		
-		while(1)
-		{
-			i%=max_rozm; 
-			if(tab[i]==-1)
-			tab[i]=rand()%10+48;
-			i++;
-		}
+		tab[0]=-1;
+		printf("\nPierwszy wyraz ciagu: %llu\nIloraz ciagu geom: %d\n", ost, a);
+		printf("tab:%d", tab[0]); 
+		do{
+			if(tab[0]==-1)
+			{
+				unsigned long long pet=ost;
+				if(pet>(ost=ost*a))
+					ost=0;
+					memset(tab, 0, max_rozm);
+					snprintf(tab,max_rozm, "%llu", ost);
+			}
+			else usleep(100);	
+		}while(1);
 	}
 	else
-		printf("Blad shmget\nKoniec pobierania i wysylania\n");
+		printf("Blad shmget\nKonciec pobierania i odbierania\n");
 		exit(0);
 }

@@ -9,12 +9,8 @@
 
 key_t klucz = 3421673;
 const int max_rozm = 40;
-const int max_ciag = 5;
 
-void tabela(void);
-
-int main()
-{
+int main(){
 	printf("Odbieranie zaczyna prace!\n");
 	size_t rozm=max_rozm;
 	char* tab;
@@ -25,48 +21,30 @@ int main()
 		tab = shmat(shmid, NULL, 0);
 		if(tab==0)
 		{
-			printf("Blad shmat!\n");
+			printf("Blad shmat\n");
 			exit(0);
 		}
-		int i, licznik=0;	
-		printf("Stan odbierania: Pracuje\nWartosci tabeli:\n");
-		tabela();	
-		time_t start=time(NULL);
-		do
-		{
-			printf("\r|");
-			for(i=1;i<max_rozm+1;i++)
+		int licznik=0;
+		printf("Stan odbierania: pracuje\n");
+		usleep(10000);
+		do{
+			if(tab[0]!=-1)
 			{
-				if(tab[i]!=tab[i-1] || tab[i]==-1)
-					licznik=0;
-				else
-					licznik++;
-			printf("%c |",tab[i-1]);
-			if(i>=2)
-				tab[i-2]=-1;
-			if (licznik==max_ciag)
-				break;
+				licznik++;
+				printf("\nLicznik: %d\t Wartosc:%s", licznik, tab);
+				if(tab[0]=='0')
+				{
+					printf("\rOsiagnieto maksymalna wartosc\n");
+					break;
+				}
+				tab[0]=-1;
 			}
-			tab[max_rozm-1]=-1;
-			tab[max_rozm-2]=-1;
-		}
-		while(licznik<max_ciag);
-		printf("\nZnaleziono %d takich bajtow w %d sekund\nKoniec pracy odbierania i pobierania\n", max_ciag, (int)(time(NULL)-start));
+			else usleep(100);	
+		}while(1);
+		printf("\nWychodzenie z wysylania i odbierania\n");
 		exit(1);
 	}
 	else
-		printf("Blad shmget\nKoniec odbierania\n");
+		printf("Blad shmget\nKoniec odbierenia\n");
 	exit(0);
-}
-void tabela(void)
-{
-	int t;
-	for(t=0;t<max_rozm;t++)
-	{
-		if(t<10)
-			printf("|%d ",t);
-		else
-			printf("|%d",t);
-	}
-	printf("|\n");
 }

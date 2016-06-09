@@ -1,4 +1,3 @@
-
 all: wysylanie odbieranie prog
 odbieranie: odbieranie.c
 	gcc  -o odbieranie odbieranie.c 
